@@ -11,7 +11,7 @@ import TextField from "../../components/TextField";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { loginState } from "../../redux/authSlice";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("ilhambabayev@smartgreen.az");
@@ -32,7 +32,10 @@ const Login = () => {
       >
         <View style={styles.container}>
           <Header />
-          <View style={styles.inputs}>
+          <Animated.View
+            entering={FadeInDown.springify().damping(12)}
+            style={styles.inputs}
+          >
             <View style={styles.spacer} />
             <TextField
               label="Email"
@@ -53,7 +56,7 @@ const Login = () => {
                 <Text style={styles.submitText}>Submit</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         </View>
       </ImageBackground>
     </Animated.View>

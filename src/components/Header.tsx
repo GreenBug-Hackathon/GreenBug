@@ -8,7 +8,7 @@ const Header = () => {
       <Text style={styles.headerText}>Welcome to</Text>
       <View style={styles.logo}>
         <SvgLogo width={80} height={80} />
-        <Text style={styles.logoText}>GreenBag</Text>
+        <Text style={styles.logoText}>GreenBug</Text>
       </View>
     </View>
   );

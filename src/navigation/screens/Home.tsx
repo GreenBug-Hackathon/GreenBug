@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { AppDispatch, RootState } from "../../redux/store";
 import { AuthState } from "../../models";
 import SvgRainFall from "../../assets/icons/rainFall";
 import SvgTemperature from "../../assets/icons/temperature";
@@ -13,12 +13,15 @@ import SvgFire from "../../assets/icons/fire";
 import SvgNoFire from "../../assets/icons/noFire";
 import SvgLight from "../../assets/icons/light";
 import DataItem from "../../components/RenderData";
+import { logoutState } from "../../redux/authSlice";
+import SvgBattery from "../../assets/icons/battery";
+import ScheduleCard from "../../components/ScheduleCard";
 
 const Main = () => {
   const [data, setData] = useState<any>({});
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     general.getData().then((res) => {
-      console.log(data);
       setData(res);
     });
   }, []);
@@ -27,10 +30,13 @@ const Main = () => {
 
   return (
     <Animated.View entering={FadeIn} style={styles.container}>
-      <View style={styles.headerContainer}>
+      <Animated.View
+        entering={FadeInUp.springify().damping(20)}
+        style={styles.headerContainer}
+      >
         <Text style={styles.nameText}>Hello, {user.name}</Text>
         <Text style={styles.altText}>It's a sunny day!</Text>
-      </View>
+      </Animated.View>
       <View style={styles.card}>
         <DataItem
           icon={<SvgRainFall />}
@@ -55,6 +61,25 @@ const Main = () => {
         />
         <DataItem icon={<SvgLight />} value={`${data.light}%`} label="Light" />
       </View>
+      <View style={{ flex: 0.8 }}>
+        <View style={styles.deviceContainer}>
+          <View>
+            <Text style={styles.device}>Device 1</Text>
+            <Text
+              style={styles.model}
+              onPress={() => {
+                dispatch(logoutState());
+              }}
+            >
+              Mode JM-G801
+            </Text>
+          </View>
+          <SvgBattery />
+        </View>
+        <ScheduleCard label="Watering Schedule" />
+        <ScheduleCard label="Light Schedule" />
+        <ScheduleCard label="Door Schedule" />
+      </View>
     </Animated.View>
   );
 };
@@ -70,7 +95,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "18%",
     alignSelf: "center",
-    width: "80%",
+    width: "91%",
     height: "25%",
     borderRadius: 8,
     shadowOpacity: 0.3,
@@ -90,37 +115,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 0.2,
     padding: 20,
+    borderBottomEndRadius: 8,
+    borderBottomStartRadius: 8,
   },
   nameText: {
     color: "#fff",
     fontSize: 24,
     fontWeight: "400",
   },
-  dataContainer: {
-    flexDirection: "row",
-    borderBottomColor: "#efefef",
-    borderBottomWidth: 1,
-    width: "50%",
-    alignItems: "center",
-    padding: 10,
-    borderTopColor: "#efefef",
-  },
-  line: {
-    width: 1,
-    height: 40,
-    backgroundColor: "#efefef",
-    alignSelf: "center",
-    marginHorizontal: 10,
-  },
-  spacer: {
-    height: 5,
-  },
-  desc: {
-    color: "#888",
-    fontSize: 12,
-  },
-  title: {
-    fontSize: 16,
+  device: {
+    fontSize: 22,
     fontWeight: "500",
+  },
+  model: {
+    fontSize: 16,
+    fontWeight: "300",
+    color: "#888",
+  },
+  deviceContainer: {
+    marginTop: 200,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 20,
   },
 });

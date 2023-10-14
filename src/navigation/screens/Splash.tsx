@@ -1,13 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
 import SvgLogo from "../../assets/icons/logo";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
 import { getStatus } from "../../redux/authSlice";
-import { AuthState } from "../../models";
 
 type StackParamList = {
   Start: undefined;
