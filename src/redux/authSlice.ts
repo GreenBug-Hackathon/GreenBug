@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../network/api";
+import api from "../network/auth";
 import { AuthState, User } from "../models";
 
 const initialState: AuthState = {
