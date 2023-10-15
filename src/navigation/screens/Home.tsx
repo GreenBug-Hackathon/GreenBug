@@ -50,7 +50,7 @@ const Main = () => {
           <Text style={styles.nameText}>Hello, {user.name}</Text>
           <Text style={styles.altText}>It's a sunny day!</Text>
         </Animated.View>
-        <View style={styles.card}>
+        <Animated.View style={styles.card} entering={FadeIn.duration(500)}>
           <DataItem
             icon={<SvgRainFall />}
             value={`${data.rain} mm`}
@@ -77,7 +77,7 @@ const Main = () => {
             value={`${data.light}%`}
             label="Light"
           />
-        </View>
+        </Animated.View>
         <View style={{ flex: 0.8 }}>
           <View style={styles.deviceContainer}>
             <View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     top: "18%",
     alignSelf: "center",
     width: "91%",
-    height: "28.5%",
+    height: "25%",
     borderRadius: 8,
     shadowOpacity: 0.3,
     elevation: 8,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     color: "#888",
   },
   deviceContainer: {
-    marginTop: 200,
+    marginTop: 170,
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: 20,

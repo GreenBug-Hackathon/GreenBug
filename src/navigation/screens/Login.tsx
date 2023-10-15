@@ -1,6 +1,5 @@
 import {
   ImageBackground,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -33,7 +32,7 @@ const Login = () => {
       >
         <View style={styles.container}>
           <Header />
-          {Platform.OS === "ios" ? null : <View style={{ height: 50 }} />}
+          <View style={{ height: 110 }} />
           <Animated.View
             entering={FadeInDown.springify().damping(12)}
             style={styles.inputs}

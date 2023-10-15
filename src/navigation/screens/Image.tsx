@@ -5,17 +5,23 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Modal,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Camera, CameraType } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import LottieView from "lottie-react-native";
+import image from "../../network/image";
 
 const ImageScreen = () => {
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [type, setType] = useState(CameraType.back);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Combined state for both images
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isUploadModalVisible, setUploadModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [result, setResult] = useState<string>("");
 
-  const cameraRef = React.useRef<Camera | null>(null);
+  const cameraRef = useRef<Camera | null>(null);
 
   const handleOpenCamera = async () => {
     const status = await Camera.requestCameraPermissionsAsync();
@@ -37,7 +43,9 @@ const ImageScreen = () => {
       });
 
       if (!result.cancelled) {
-        setSelectedImage(result.uri);
+        setSelectedImage(result.assets[0].uri);
+      } else {
+        Alert.alert("Cancelled");
       }
     } else {
       Alert.alert("Access denied to gallery");
@@ -54,12 +62,26 @@ const ImageScreen = () => {
         const { uri } = await cameraRef.current.takePictureAsync({
           quality: 1,
         });
-        setSelectedImage(uri); // Set the selected image URI
+        setSelectedImage(uri);
         setOpenCamera(false);
       } catch (error) {
-        console.error("Error taking picture:", error);
+        Alert.alert("Error taking picture:");
       }
     }
+  };
+
+  const toggleUploadModal = () => {
+    setUploadModalVisible(!isUploadModalVisible);
+    const formData: any = new FormData();
+    formData.append("file", {
+      name: "file",
+      type: `image/${selectedImage!.split(".").pop()}`,
+      uri: selectedImage,
+    });
+    image.predict(formData).then((res) => {
+      setLoading(false);
+      setResult(res.prediction);
+    });
   };
 
   return (
@@ -71,7 +93,7 @@ const ImageScreen = () => {
               <Text style={styles.text}>Close</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <View style={styles.takePictureButtonContainer}>
             <TouchableOpacity
               onPress={takePicture}
               style={styles.captureButton}
@@ -97,12 +119,58 @@ const ImageScreen = () => {
         </View>
       )}
       {selectedImage && (
-        <Image
-          key={selectedImage}
-          source={{ uri: selectedImage }}
-          style={{ width: 200, height: 200 }}
-        />
+        <View style={{ flex: 0.8 }}>
+          <Image
+            key={selectedImage}
+            source={{ uri: selectedImage }}
+            style={styles.image}
+          />
+          <TouchableOpacity
+            onPress={toggleUploadModal}
+            style={styles.uploadButton}
+          >
+            <Text style={styles.uploadButtonText}>Upload</Text>
+          </TouchableOpacity>
+        </View>
       )}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isUploadModalVisible}
+        onRequestClose={toggleUploadModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={toggleUploadModal}
+            >
+              <Text style={styles.closeModalButtonText}>Close</Text>
+            </TouchableOpacity>
+            <View style={styles.loadingContainer}>
+              {loading ? (
+                <LottieView
+                  source={require("../../assets/animations/loading.json")}
+                  autoPlay
+                  loop
+                  style={styles.animation}
+                />
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                    color: "black",
+                    textAlign: "center",
+                  }}
+                >
+                  {result}
+                </Text>
+              )}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -112,9 +180,24 @@ export default ImageScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    justifyContent: "space-evenly",
+  },
+  takePictureButtonContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  uploadButtonText: {
+    color: "rgba(255, 255, 255, 1)",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginTop: 20,
   },
   card: {
     backgroundColor: "#fff",
@@ -126,6 +209,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     justifyContent: "space-evenly",
+  },
+  uploadButton: {
+    backgroundColor: "#088551",
+    padding: 20,
+    alignItems: "center",
+    borderRadius: 10,
+    marginTop: 30,
   },
   button: {
     backgroundColor: "#088551",
@@ -175,9 +265,48 @@ const styles = StyleSheet.create({
     width: "40%",
     alignSelf: "center",
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  animation: {
+    width: 150,
+    height: 150,
+  },
   captureText: {
     color: "rgba(255, 255, 255, 1)",
     fontSize: 20,
     fontWeight: "700",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    width: "80%",
+    height: "30%",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#088551",
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    padding: 5,
+  },
+  closeModalButton: {
+    backgroundColor: "#088551",
+    borderRadius: 8,
+    width: "20%",
+    height: "20%",
+    justifyContent: "center",
+  },
+  closeModalButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    alignSelf: "center",
   },
 });

@@ -25,11 +25,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "400",
     color: "white",
+    marginTop: 10,
   },
   logo: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 50,
+    marginTop: 30,
   },
   logoText: {
     fontSize: 30,

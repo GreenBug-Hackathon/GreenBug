@@ -6,10 +6,12 @@ import { store } from "./src/redux/store";
 import Splash from "./src/navigation/screens/Splash";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LogBox } from "react-native";
+import registerNNPushToken from "native-notify";
 
 LogBox.ignoreAllLogs();
 
-const App = () => {
+export default function App() {
+  registerNNPushToken(13463, 'viYbtekyjgrwpoQFSMzr4E');
   const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
@@ -26,6 +28,4 @@ const App = () => {
       </Provider>
     </NavigationContainer>
   );
-};
-
-export default App;
+}
