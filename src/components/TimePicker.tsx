@@ -6,14 +6,14 @@ const TimePicker = ({ label }: { label: string }) => {
   return (
     <View style={styles.timePicker}>
       <Text style={styles.timePickerLabel}>{label}:</Text>
-      <DateTimePicker
+      {/* <DateTimePicker
         testID="dateTimePicker"
         value={new Date()}
         mode="time"
         is24Hour={true}
         display="default"
         onChange={() => {}}
-      />
+      /> */}
     </View>
   );
 };

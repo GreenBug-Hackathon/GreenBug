@@ -1,5 +1,6 @@
 import {
   ImageBackground,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -32,6 +33,7 @@ const Login = () => {
       >
         <View style={styles.container}>
           <Header />
+          {Platform.OS === "ios" ? null : <View style={{ height: 50 }} />}
           <Animated.View
             entering={FadeInDown.springify().damping(12)}
             style={styles.inputs}
@@ -66,12 +68,11 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    opacity: 0.7,
-    backgroundColor: "#088551",
+    backgroundColor: "rgba(8, 133, 81, 0.8)",
     justifyContent: "flex-end",
   },
   inputs: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     padding: 20,
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   submitText: {
-    color: "white",
+    color: "rgba(255, 255, 255, 1)",
     fontSize: 20,
     fontWeight: "700",
   },
